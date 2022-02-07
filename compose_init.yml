@@ -1,0 +1,32 @@
+﻿version: '3'
+services:
+  decidim:
+    image: corp0/eparticipa-decidim:latest
+#    entrypoint: ["/code/entrypoint.sh"]
+    command: ["/code/init.sh"]
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./scripts/init.sh:/code/init.sh
+      - ./scripts/entrypoint.sh:/code/entrypoint.sh
+      - ./src:/code/src
+    environment:
+      - RAILS_ENV=development
+      - DATABASE_HOST=pg
+      - DATABASE_USERNAME=postgres
+    links:
+      - pg
+      - redis
+  pg:
+    image: postgres
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+  redis:
+    image: redis
+    volumes:
+      - redis-data:/data
+volumes:
+  pg-data: {}
+  redis-data: {}
